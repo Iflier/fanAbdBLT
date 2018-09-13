@@ -63,6 +63,7 @@ def acceptCommandMode(serialObj, eventObj):
     if serialObj.is_open:
         while True:
             command = input("Command -->:").lower()  # 阻塞
+            print("Recived command: {0}".format(command))
             if command in ["quit", "exit"]:
                 break
             elif command == "auto":
@@ -74,7 +75,7 @@ def acceptCommandMode(serialObj, eventObj):
                     _ = serialObj.write(('1#' + command + ';').encode())
                     result = serialObj.readline().decode()
                     print("Response -->: {0}".format(result))
-                else:
+                elif 0 <= int(float(command)) <= 100:
                     if not eventObj.is_set():
                         # 未进入auto模式下，允许从console控制fan
                         _ = serialObj.write(('2#' + command + ';').encode())
@@ -82,6 +83,8 @@ def acceptCommandMode(serialObj, eventObj):
                         print("Response -->: {0}".format(result))
                     else:
                         print("[WARN] Fan in auto mode, exit from it please.")
+                else:
+                    print("[ERROR] Unknown command.")
         serialObj.close()
     else:
         print("[ERROR] Failed to open serial port.")
