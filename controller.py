@@ -51,7 +51,7 @@ def autoRunMode(serialObj, eventObj):
                 fanSpeed = 75
             else:
                 fanSpeed = 0
-            _ = serialObj.write(('I,2#' + str(fanSpeed) + ';').encode())  # 分号作为串口结束符
+            _ = serialObj.write(('2#' + str(fanSpeed) + ';').encode())  # 分号作为串口结束符
             time.sleep(6.0)
         else:
             eventObj.wait()  # 阻塞
@@ -71,13 +71,13 @@ def acceptCommandMode(serialObj, eventObj):
                 eventObj.clear()
             else:
                 if command in ['a', 'p', 't']:
-                    _ = serialObj.write(('S,1#' + command + ';').encode())
+                    _ = serialObj.write(('1#' + command + ';').encode())
                     result = serialObj.readline().decode()
                     print("Response -->: {0}".format(result))
                 else:
                     if not eventObj.is_set():
                         # 未进入auto模式下，允许从console控制fan
-                        _ = serialObj.write(('S,2#' + command + ';').encode())
+                        _ = serialObj.write(('2#' + command + ';').encode())
                         result = serialObj.readline().decode()
                         print("Response -->: {0}".format(result))
                     else:
