@@ -13,7 +13,6 @@ import os
 import sys
 import time
 import math
-import signal
 import argparse
 from threading import Thread, Event
 
@@ -42,17 +41,17 @@ def autoRunMode(serialObj, eventObj):
             # 处理器核心的平均使用率
             avergeSystemUtilization = math.ceil(systemUtilization / CPUCORES)
             if avergeSystemUtilization <= 10:
-                fanSpeed = 25
+                fanSpeed = 33
             elif 10 < avergeSystemUtilization and avergeSystemUtilization <= 20:
-                fanSpeed = 35
+                fanSpeed = 37
             elif 20 < avergeSystemUtilization and avergeSystemUtilization <= 30:
-                fanSpeed = 50
+                fanSpeed = 43
             elif  30 < avergeSystemUtilization and avergeSystemUtilization <= 40:
-                fanSpeed = 60
+                fanSpeed = 46
             elif 40 < avergeSystemUtilization and avergeSystemUtilization <= 50:
-                fanSpeed = 75
+                fanSpeed = 52
             elif avergeSystemUtilization > 50:
-                fanSpeed = 90
+                fanSpeed = 59
             else:
                 fanSpeed = 0
             _ = serialObj.write(('N,2#' + str(fanSpeed) + ';').encode())  # 不要求应答，分号作为串口结束符
@@ -69,6 +68,7 @@ def acceptCommandMode(serialObj, eventObj):
             command = input("Command -->:").lower()  # 阻塞
             print("Recived command: {0}".format(command))
             if command in ["quit", "exit"]:
+                _ = serialObj.write(('N,2#0;').encode())  # 不需要应答
                 break
             elif command == "auto":
                 eventObj.set()
@@ -98,7 +98,7 @@ def acceptCommandMode(serialObj, eventObj):
 print("[INFO] Starting ...")
 thList = list()
 thList.append(Thread(target=acceptCommandMode, args=(com, eventObj)))
-thList.append(Thread(target=autoRunMode, args=(com, eventObj)))
+thList.append(Thread(target=autoRunMode, args=(com, eventObj), daemon=True))
 for th in thList:
     th.start()
 for th in thList:
