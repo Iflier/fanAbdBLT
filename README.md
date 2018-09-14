@@ -8,4 +8,4 @@
 由本本上开的console输入命令，通过USB转串口连接到蓝牙`（master角色）`设备，它可以连接若干个蓝牙从机，由该蓝牙设备把指令发送给蓝牙从机</br>
 1#从机用于测量当前环境的物理量，如温度，气压等。2#从机，连接涡轮风扇，根据指令控制涡轮风扇的转速，强制送风，实现降温效果。</br>
 好久都没有和人说话了，可能表达的意思不完整 :-)，快递的一些电子产品还没有到，但是控制涡轮风扇的功能已经调试好了，先看看吧</br>
-![image](https://github.com/Iflier/fanAndBLT/tree/master/images/1.jpg)</br>
+![image](https://github.com/Iflier/fanAndBLT/blob/master/images/1.jpg)</br>
