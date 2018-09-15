@@ -22,7 +22,7 @@ import serial
 ap = argparse.ArgumentParser(description="开两个线程，一个线程接受console输入，直接向各个设备发送命令；另一个是受到另一个线程控制的线程")
 ap.add_argument("-p", "--port", type=str, default="COM6", help="Specify a serial port to connect, such as COM6, ...")
 ap.add_argument("-b", "--baudrate", type=int, default=9600, help="Specify a baud rate, such as 9600, 115200, ...")
-# ap.add_argument("-d", "--debug", type=bool, default=False, help="Weather enter into debug mode.")
+ap.add_argument("-d", "--debug", type=bool, action="store_true", help="Weather enter into debug mode.")
 args = vars(ap.parse_args())
 
 eventObj = Event()
@@ -78,7 +78,7 @@ def acceptCommandMode(serialObj, eventObj):
                 _ = serialObj.write(('R,1#' + command + ';').encode())  # 要求有应答
                 result = serialObj.readline().decode()
                 print("Response -->: {0}".format(result))
-            elif bool(re.match(r"[1-9]?\d?$|100$", command)):
+            elif bool(re.match(r"[1-9]?\d?$|100$", command)):  # 匹配0~100之间的字符
                 if not eventObj.is_set():
                     # 未进入auto模式下，允许从console控制fan
                     _ = serialObj.write(('R,2#' + command + ';').encode())  # 要求有应答
