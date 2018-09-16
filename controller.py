@@ -31,7 +31,6 @@ com = serial.Serial(port=args["port"], baudrate=args["baudrate"], timeout=7)
 
 
 def autoRunMode(serialObj, eventObj):
-    # 包装后的命令以I开头表示发送的是整数
     while serialObj.is_open:
         if eventObj.is_set():
             # 每一个逻辑处理器的使用率
@@ -73,6 +72,7 @@ def acceptCommandMode(serialObj, eventObj):
             elif command == "auto":
                 eventObj.set()
             elif command == "cancel":
+                print("Exit from auot run mode.")
                 eventObj.clear()
             elif command in ['a', 'p', 't']:
                 _ = serialObj.write(('R,1#' + command + ';').encode())  # 要求有应答
@@ -86,7 +86,7 @@ def acceptCommandMode(serialObj, eventObj):
                     print("Response -->: {0}".format(result))
                 else:
                     # 如果已经进入到Auto Run模式
-                    print("[WARNNING] Fan in auto mode, exit from it please.")
+                    print("[WARNNING] Fan in auto run mode, exit from it please.")
             else:
                 print("[ERROR] Received an unknown command: {0}".format(command))
         serialObj.close()
