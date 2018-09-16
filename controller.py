@@ -22,7 +22,7 @@ import serial
 ap = argparse.ArgumentParser(description="开两个线程，一个线程接受console输入，直接向各个设备发送命令；另一个是受到另一个线程控制的线程")
 ap.add_argument("-p", "--port", type=str, default="COM6", help="Specify a serial port to connect, such as COM6, ...")
 ap.add_argument("-b", "--baudrate", type=int, default=9600, help="Specify a baud rate, such as 9600, 115200, ...")
-ap.add_argument("-d", "--debug", type=bool, action="store_true", help="Weather enter into debug mode.")
+ap.add_argument("-d", "--debug", action="store_true", help="Weather enter into debug mode.")
 args = vars(ap.parse_args())
 
 eventObj = Event()
@@ -41,17 +41,17 @@ def autoRunMode(serialObj, eventObj):
             # 处理器核心的平均使用率
             avergeSystemUtilization = math.ceil(systemUtilization / CPUCORES)
             if avergeSystemUtilization <= 10:
-                fanSpeed = 33
+                fanSpeed = 29
             elif 10 < avergeSystemUtilization and avergeSystemUtilization <= 20:
-                fanSpeed = 37
+                fanSpeed = 36
             elif 20 < avergeSystemUtilization and avergeSystemUtilization <= 30:
-                fanSpeed = 43
+                fanSpeed = 41
             elif  30 < avergeSystemUtilization and avergeSystemUtilization <= 40:
                 fanSpeed = 46
             elif 40 < avergeSystemUtilization and avergeSystemUtilization <= 50:
                 fanSpeed = 52
             elif avergeSystemUtilization > 50:
-                fanSpeed = 59
+                fanSpeed = 65
             else:
                 fanSpeed = 0
             _ = serialObj.write(('N,2#' + str(fanSpeed) + ';').encode())  # 不要求应答，分号作为串口结束符
