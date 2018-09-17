@@ -101,7 +101,6 @@ thList.append(Thread(target=acceptCommandMode, args=(com, eventObj)))
 thList.append(Thread(target=autoRunMode, args=(com, eventObj), daemon=True))
 for th in thList:
     th.start()
-for th in thList:
-    th.join()
+thList[0].join()
 
 print("Done.")
