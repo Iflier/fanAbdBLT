@@ -67,6 +67,9 @@ def acceptCommandMode(serialObj, eventObj):
             command = input("Command -->:").lower()  # 阻塞
             print("Recived command: {0}".format(command))
             if command in ["quit", "exit"]:
+                if eventObj.is_set():
+                    """退出之前先从自动调速模式下退出，不关机重新进入时，不用从上次的自动调速模式下退出"""
+                    eventObj.clear()
                 _ = serialObj.write(('N,2#0;').encode())  # 不需要应答
                 break
             elif command == "auto":
