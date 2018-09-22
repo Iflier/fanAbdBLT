@@ -39,18 +39,8 @@ def autoRunMode(serialObj, eventObj):
             systemUtilization = math.ceil(sum(systemUtilizationPerCore))
             # 处理器核心的平均使用率
             avergeSystemUtilization = math.ceil(systemUtilization / CPUCORES)
-            if avergeSystemUtilization <= 10:
-                fanSpeed = 29
-            elif 10 < avergeSystemUtilization and avergeSystemUtilization <= 20:
-                fanSpeed = 36
-            elif 20 < avergeSystemUtilization and avergeSystemUtilization <= 30:
-                fanSpeed = 41
-            elif  30 < avergeSystemUtilization and avergeSystemUtilization <= 40:
-                fanSpeed = 46
-            elif 40 < avergeSystemUtilization and avergeSystemUtilization <= 50:
-                fanSpeed = 52
-            elif avergeSystemUtilization > 50:
-                fanSpeed = 65
+            if 0 <= avergeSystemUtilization <= 100:
+                fanSpeed = 29 + math.ceil(0.4 * avergeSystemUtilization)
             else:
                 fanSpeed = 0
             _ = serialObj.write(('N,2#' + str(fanSpeed) + ';').encode())  # 不要求应答，分号作为串口结束符
