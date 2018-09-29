@@ -11,5 +11,11 @@
 ![image](https://github.com/Iflier/fanAndBLT/blob/master/images/1.jpg)</br>
 涡轮风扇，很强大</br>
 ![image](https://github.com/Iflier/fanAndBLT/blob/master/images/2.jpg)</br>
+
 ## Update `2018.09.16`
+
 缺的小东西买回来了，然后发现`master`设备并不能连接两个`slaver`设备，尽管已经修改了`master`设备的`INQM`选项。
+
+## Update `2018.09.29`
+
+当涡轮风扇的转速与计算机`CPU`平均利用率呈线性关系的时候，风扇的噪声比较大</br>
