@@ -20,15 +20,14 @@ import psutil
 import serial
 
 ap = argparse.ArgumentParser(description="开两个线程，一个线程接受console输入，直接向各个设备发送命令；另一个是受到另一个线程控制的线程")
-ap.add_argument("-p", "--port", type=str, default="COM6", help="Specify a serial port to connect, such as COM6, ...")
-ap.add_argument("-b", "--baudrate", type=int, default=9600, help="Specify a baud rate, such as 9600, 115200, ...")
-ap.add_argument("-s", "--sleeptime", type=int, default=6, help="Set interval time value.")
-ap.add_argument("-d", "--debug", action="store_true", help="Weather enter into debug mode.")
+ap.add_argument("-p", "--port", type=str, default="COM6", required=False, help="Specify a serial port to connect, such as COM6, ...")
+ap.add_argument("-s", "--sleeptime", type=int, default=6, required=False, help="Set interval time value.")
+ap.add_argument("-d", "--debug", action="store_true", required=False, help="Weather enter into debug mode.")
 args = vars(ap.parse_args())
 
 eventObj = Event()
 CPUCORES = psutil.cpu_count(logical=True)  # 包含逻辑CPU个数
-com = serial.Serial(port=args["port"], baudrate=args["baudrate"], timeout=7)
+com = serial.Serial(port=args["port"], baudrate=9600, timeout=5)
 
 
 def autoRunMode(serialObj, eventObj):
