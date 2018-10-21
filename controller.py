@@ -71,7 +71,7 @@ def acceptCommandMode(serialObj, eventObj):
                 _ = serialObj.write(('R,1#' + command + ';').encode())  # 要求有应答
                 result = serialObj.readline().decode()
                 print("Response -->: {0}".format(result))
-            elif bool(re.match(r"[1-9]?\d?$|100$", command)):  # 匹配0~100之间的字符
+            elif bool(re.match(r"[1-9]?\d?$|100$", command)):  # 匹配1~100之间的字符
                 if not eventObj.is_set():
                     # 未进入auto模式下，允许从console控制fan
                     _ = serialObj.write(('R,2#' + command + ';').encode())  # 要求有应答
