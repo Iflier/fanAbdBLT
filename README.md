@@ -23,3 +23,7 @@
 ## Update `2018.10.02`
 
 由于单片机端的串口已经被指定了，那么在`PC`端指定串口波特率无意义，已删除该选项
+
+## Update `2018.10.21`
+
+`Go`语言版的实现，参见[这个链接](https://github.com/Iflier/fanAndBLTGo/tree/useSwitch)
