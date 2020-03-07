@@ -13,6 +13,7 @@ import os
 import sys
 import time
 import math
+import platform
 import argparse
 from threading import Thread, Event
 
@@ -20,7 +21,7 @@ import psutil
 import serial
 
 ap = argparse.ArgumentParser(description="开两个线程，一个线程接受console输入，直接向各个设备发送命令；另一个是受到另一个线程控制的线程")
-ap.add_argument("-p", "--port", type=str, default="COM6", required=False, help="Specify a serial port to connect, such as COM6, ...")
+ap.add_argument("-p", "--port", type=str, default="COM4", required=False, help="Specify a serial port to connect, such as COM6, ...")
 ap.add_argument("-s", "--sleeptime", type=int, default=6, required=False, help="Set interval time value.")
 ap.add_argument("-d", "--debug", action="store_true", required=False, help="Weather enter into debug mode.")
 args = vars(ap.parse_args())
@@ -40,9 +41,9 @@ def autoRunMode(serialObj, eventObj):
             # 处理器核心的平均使用率
             avergeSystemUtilization = math.ceil(systemUtilization / CPUCORES)
             if 0 <= avergeSystemUtilization <= 100:
-                fanSpeed = 29 + math.ceil(0.4 * avergeSystemUtilization)
+                fanSpeed = 45 - math.ceil(0.4 * avergeSystemUtilization)
             else:
-                fanSpeed = 0
+                fanSpeed = 100
             _ = serialObj.write(('N,2#' + str(fanSpeed) + ';').encode())  # 不要求应答，分号作为串口结束符
             time.sleep(args["sleeptime"])
         else:
@@ -58,9 +59,10 @@ def acceptCommandMode(serialObj, eventObj):
             print("Recived command: {0}".format(command))
             if command in ["quit", "exit"]:
                 if eventObj.is_set():
-                    """退出之前先从自动调速模式下退出，不关机重新进入时，不用从上次的自动调速模式下退出"""
+                    # 退出之前先从自动调速模式下退出，不关机重新进入时，不用从上次的自动调速模式下退出
                     eventObj.clear()
-                _ = serialObj.write(('N,2#0;').encode())  # 不需要应答
+                _ = serialObj.write(('N,2#100;').encode())  # 不需要应答
+                time.sleep(0.6)
                 break
             elif command == "auto":
                 eventObj.set()
@@ -89,6 +91,7 @@ def acceptCommandMode(serialObj, eventObj):
         sys.exit(0)
 
 print("[INFO] Starting ...")
+print("Running on platform: {0} - {1}, Python: {2} - {3}".format(platform.system(), platform.machine(), platform.python_implementation(), platform.python_version()))
 thList = list()
 thList.append(Thread(target=acceptCommandMode, args=(com, eventObj)))
 thList.append(Thread(target=autoRunMode, args=(com, eventObj), daemon=True))

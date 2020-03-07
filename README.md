@@ -26,4 +26,13 @@
 
 ## Update `2018.10.21`
 
+## Update `2020.03.07`
+
+使用带有串口接口的 `PWM` 发生器模块替代 `mini Arduino` 组件。使用`mini Arduino`有以下几个缺点：</br>
+1、调试的时候比较麻烦，如果连接出错，可能导致该组件永久损坏；</br>
+2、需要与`4 Pin`风扇的电源共地，而`mini Arduino`本身又占用计算机的一个USB端口，这样不太好。已有的现象是，鼠标出现卡顿现象。应用该方案后，该现象解除  
+现在使用的是如下图所示的带有串口功能的PWM模块。通过CP2012连接，可以直接操作它：
+![image]()  
+
+
 `Go`语言版的实现，参见[这个链接](https://github.com/Iflier/fanAndBLTGo/tree/useSwitch)
