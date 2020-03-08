@@ -11,7 +11,7 @@ import time
 import math
 import platform
 import argparse
-from datetime import date
+from datetime import datetime
 from threading import Thread, Event
 
 import psutil
@@ -26,7 +26,7 @@ class BLTController(object):
         self.com = serial.Serial(port=self.port, baudrate=self.baud, timeout=5)
     
     def description(self):
-        print("Start from {0}".format(date.today().strftime("%c")))
+        print("Start from {0}".format(datetime.now().strftime("%c")))
         print("Serial Version: {0}".format(serial.VERSION))
         print("Psutil Version: {0}".format(".".join(map(lambda x: str(x), psutil.version_info))))
         print("Running on platform: {0} - {1}, Python: {2} - {3}".format(platform.system(), platform.machine(), platform.python_implementation(), platform.python_version()))
@@ -35,11 +35,11 @@ class BLTController(object):
         # 设置方波发生器初始频率、占空比
         if self.com.is_open:
             print("[INFO] Initialization hardware ...")
-            print("[INFO] Set up frequency to 25 KHz ...")
-            self.com.write("F25.0".encode(encoding='utf-8'))
+            print("[INFO] Set up frequency to 23.5 KHz ...")
+            self.com.write("F23.5".encode(encoding='utf-8'))
             time.sleep(0.25)  # 如果不添加延迟，对端来不及响应
-            print("[INFO] Set up dutyto 55 % ...")
-            self.com.write("D2:050".encode(encoding='utf-8'))
+            print("[INFO] Set up duty to 55 % ...")
+            self.com.write("D2:055".encode(encoding='utf-8'))
             time.sleep(0.25)
             print("[INFO] Initialization done.")
         else:
@@ -54,21 +54,19 @@ class BLTController(object):
         while self.com.is_open:
             if self.event.is_set():
                 cpuUtilization = self.computeUtilizationRatio()
-                if 0 < cpuUtilization and cpuUtilization <= 10:
-                    fanSpeed = max(math.floor(50 - 0.8 * cpuUtilization), 0)
-                elif cpuUtilization > 10 and cpuUtilization <= 100:
-                    fanSpeed = max(math.floor(50 - 1.2 * cpuUtilization), 0)
+                if 0 < cpuUtilization and cpuUtilization <= 15:
+                    fanSpeed = max(math.floor(55 - 0.8 * cpuUtilization), 0)
+                elif cpuUtilization > 15 and cpuUtilization <= 100:
+                    fanSpeed = max(math.floor(60 - 1.2 * cpuUtilization), 0)
                 else:
                     fanSpeed = 50
                 self.com.write("D2:{0:>03,d}".format(fanSpeed).encode(encoding='utf-8'))
-                time.sleep(0.2)
-                _ = self.com.read(size=4)
-                time.sleep(0.7)
+                time.sleep(1.5)
             else:
                 self.event.wait()
     
     def managedMode(self):
-        while self.com.is_open:
+        while True:
             try:
                 command = input("Command -->:").strip(" ").lower()
                 print("Received command: {0}".format(command))
@@ -76,8 +74,7 @@ class BLTController(object):
                     if not self.event.is_set():
                         duty = max(0, min(int(command), 55))
                         self.com.write("D2:{0:>03,d}".format(duty).encode(encoding='utf-8'))
-                        time.sleep(0.2)
-                        _ = self.com.read(size=4)
+                        time.sleep(0.3)
                     else:
                         print("[WARNING] Unable to hanle command in auto-run mode.")
                 elif command in ['auto', 'exit', 'quit', 'cancel']:
@@ -95,15 +92,14 @@ class BLTController(object):
                         else:
                             print("[INFO] Alerady in managed mode .")
                     elif command in ['exit', 'quit']:
-                        if self.event.is_set():
-                            self.event.clear()
+                        self.event.clear()
                         break
                     else:
                         print("[WARNING] Unknown command: {0}".format(command))
             except Exception as err:
                 print("[ERROR] {0}".format(err))
                 break
-        self.com.write("F25.0".encode(encoding='utf-8'))
+        self.com.write("F23.5".encode(encoding='utf-8'))
         time.sleep(0.3)
         self.com.write("D2:{0:>03,d}".format(55).encode())
         time.sleep(0.25)
